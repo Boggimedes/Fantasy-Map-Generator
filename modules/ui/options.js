@@ -510,16 +510,16 @@ function randomizeOptions() {
 
   // 'Options' settings
   if (randomize || !locked("template")) randomizeHeightmapTemplate();
-  if (randomize || !locked("regions")) regionsInput.value = regionsOutput.value = gauss(15, 3, 2, 30);
+  // if (randomize || !locked("regions")) regionsInput.value = regionsOutput.value = gauss(15, 3, 2, 30);
   if (randomize || !locked("provinces")) provincesInput.value = provincesOutput.value = gauss(20, 10, 20, 100);
   if (randomize || !locked("manors")) {
     manorsInput.value = 1000;
     manorsOutput.value = "auto";
   }
-  if (randomize || !locked("religions")) religionsInput.value = religionsOutput.value = gauss(5, 2, 2, 10);
+  // if (randomize || !locked("religions")) religionsInput.value = religionsOutput.value = gauss(5, 2, 2, 10);
   if (randomize || !locked("power")) powerInput.value = powerOutput.value = gauss(4, 2, 0, 10, 2);
   if (randomize || !locked("neutral")) neutralInput.value = neutralOutput.value = rn(1 + Math.random(), 1);
-  if (randomize || !locked("cultures")) culturesInput.value = culturesOutput.value = gauss(12, 3, 5, 30);
+  // if (randomize || !locked("cultures")) culturesInput.value = culturesOutput.value = gauss(12, 3, 5, 30);
   if (randomize || !locked("culturesSet")) randomizeCultureSet();
 
   // 'Configure World' settings
@@ -635,6 +635,7 @@ function regeneratePrompt() {
   }
   const workingTime = (Date.now() - last(mapHistory).created) / 60000; // minutes
   if (workingTime < 5) {
+    document.getElementById('map').style.display = 'inherit';
     regenerateMap();
     return;
   }
@@ -651,6 +652,7 @@ function regeneratePrompt() {
       Generate: function () {
         closeDialogs();
         regenerateMap();
+        document.getElementById('map').style.display = 'inherit';
       }
     }
   });

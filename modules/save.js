@@ -1,5 +1,36 @@
 // Functions to save and load the map
 "use strict";
+// download map as SVG
+async function saveToServer() {
+  TIME && console.time("saveToServer");
+  const url = await getMapURL("svgToServer");
+  const link = document.createElement("a");
+  link.download = getFileName() + ".svg";
+  link.href = url;
+  const cultures = JSON.stringify(pack.cultures);
+  const states = JSON.stringify(pack.states);
+  const burgs = JSON.stringify(pack.burgs);
+  const religions = JSON.stringify(pack.religions);
+  const provinces = JSON.stringify(pack.provinces);
+  let data = {
+    svgString: url,
+    cultures: cultures,
+    states: states,
+    burgs: burgs,
+    religions: religions,
+  };
+
+  $.ajax({
+    type: "POST",
+    url: "/api/region/" + regionId + "/upload-map",
+    data: data,
+    success: () => {alert('success');},
+  });
+  // link.click();
+
+  // tip(`${link.download} is saved. Open "Downloads" screen (crtl + J) to check. You can set image scale in options`, true, "success", 5000);
+  TIME && console.timeEnd("saveToServer");
+}
 
 // download map as SVG
 async function saveSVG() {
@@ -139,6 +170,11 @@ async function saveTiles() {
 
 // parse map svg to object url
 async function getMapURL(type, options = {}) {
+  let toServer = false;
+  if (type == "svgToServer") {
+    type = "svg";
+    toServer = true;
+  }
   const {debug = false, globe = false, noLabels = false, noWater = false} = options;
   const cloneEl = document.getElementById("map").cloneNode(true); // clone svg
   cloneEl.id = "fantasyMap";
@@ -296,6 +332,7 @@ async function getMapURL(type, options = {}) {
   clone.remove();
 
   const serialized = `<?xml version="1.0" encoding="UTF-8" standalone="no"?>` + new XMLSerializer().serializeToString(cloneEl);
+  if(toServer) return serialized;
   const blob = new Blob([serialized], {type: "image/svg+xml;charset=utf-8"});
   const url = window.URL.createObjectURL(blob);
   window.setTimeout(() => window.URL.revokeObjectURL(url), 5000);

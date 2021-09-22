@@ -21,7 +21,7 @@ function editStates() {
     close: closeStatesEditor,
     position: {my: "right top", at: "right-10 top+10", of: "svg", collision: "fit"}
   });
-
+  openRegenerationMenu();
   // add listeners
   document.getElementById("statesEditorRefresh").addEventListener("click", refreshStatesEditor);
   document.getElementById("statesEditStyle").addEventListener("click", () => editStyle("regions"));
@@ -34,6 +34,8 @@ function editStates() {
   document.getElementById("statesRandomize").addEventListener("click", randomizeStatesExpansion);
   document.getElementById("statesNeutral").addEventListener("input", () => recalculateStates(false));
   document.getElementById("statesNeutralNumber").addEventListener("change", () => recalculateStates(false));
+  document.getElementById("stateShrink").addEventListener("click", () => shrinkStates());
+  document.getElementById("stateGrow").addEventListener("click", () => growStates());
   document.getElementById("statesManually").addEventListener("click", enterStatesManualAssignent);
   document.getElementById("statesManuallyApply").addEventListener("click", applyStatesManualAssignent);
   document.getElementById("statesManuallyCancel").addEventListener("click", () => exitStatesManualAssignment());
@@ -339,7 +341,9 @@ function editStates() {
       s.name = nameInput.value;
       s.formName = formSelect.value;
       s.fullName = fullNameInput.value;
-      if (changed && stateNameEditorUpdateLabel.checked) BurgsAndStates.drawStateLabels([s.i]);
+      if (changed 
+        // && stateNameEditorUpdateLabel.checked
+        ) BurgsAndStates.drawStateLabels([s.i]);
       refreshStatesEditor();
     }
   }
@@ -685,9 +689,21 @@ function editStates() {
     statesEditor.querySelectorAll(".show").forEach(el => el.classList.remove("hidden"));
     $("#statesEditor").dialog({position: {my: "right top", at: "right-10 top+10", of: "svg", collision: "fit"}});
   }
+  function growStates(){
+    
+    statesNeutralNumber.value = parseFloat(statesNeutralNumber.value, 10)+0.05;
+    statesNeutral.value = parseFloat(statesNeutral.value, 10)+0.05;
+    recalculateStates(true);
+  }
+
+  function shrinkStates(){
+    statesNeutralNumber.value = parseFloat(statesNeutralNumber.value, 10)-0.05;
+    statesNeutral.value = parseFloat(statesNeutral.value, 10)-0.05;
+    recalculateStates(true);
+  }
 
   function recalculateStates(must) {
-    if (!must && !statesAutoChange.checked) return;
+    // if (!must && !statesAutoChange.checked) return;
 
     BurgsAndStates.expandStates();
     BurgsAndStates.generateProvinces();
